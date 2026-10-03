@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summoney</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<!-- เรียกใช้ Chart.js และ Plugin แสดงตัวเลขบนกราฟ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+<body>
+  <div class="mac-window">
+    <div class="title-bar">
+      <div class="window-title"></div>   <!-- ชื่อหัวเพจ Summoney ออก -->
+    </div>
+
+    <div class="content">
+      <div class="layout">
+
+        <div class="balance-card">
+          <div class="balance-main">
+            <div class="balance-label">คงเหลือหลังหักรายจ่าย</div>
+            <div class="balance-amount" id="sumBalance">฿0.00</div>
+          </div>
+          <div class="balance-stats">
+            <div class="balance-stat">
+              <span class="stat-label">รับเข้า</span>
+              <span class="stat-value" id="sumIncome">฿0.00</span>
+            </div>
+            <div class="stat-sep"></div>
+            <div class="balance-stat">
+              <span class="stat-label">จ่ายไปทั้งหมด</span>
+              <span class="stat-value" id="sumExpense">฿0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label">เงินที่ได้รับ</div>
+          <div class="panel">
+            <div class="field-row">
+              <span>จำนวนเงิน</span>
+              <div class="mac-field">
+                <span class="currency">฿</span>
+                <input type="number" id="incomeInput" placeholder="0.00" inputmode="decimal" step="0.01">
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">รายการที่ต้องจ่าย</div>
+          <div class="panel">
+            <div class="items-list" id="itemsList"></div>
+            <div class="empty-state" id="emptyState">ยังไม่มีรายการ กด "เพิ่มรายการ" เพื่อเริ่มบันทึก</div>
+            <div class="list-footer">
+              <button id="addItemBtn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+                เพิ่มรายการ
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label">&nbsp;</div>
+          
+          <!-- กราฟวงกลมฝั่งขวา -->
+          <div class="pie-card">
+            <h3 class="pie-title">📊 สัดส่วนรายจ่าย</h3>
+            <div class="pie-chart-wrapper">
+              <canvas id="expensePieChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+
+            <div class="action-bar">
+            <input type="datetime-local" id="recordDateTime" lang="th-TH" class="btn-action" title="เลือกระบุวันเวลา">
+
+            <button id="saveHistoryBtn" class="btn-action">💾 บันทึกข้อมูลเก็บไว้</button>
+            <button onclick="openChartModal()" class="btn-action">📊 ดูกราฟรายปี</button>
+
+            <button onclick="clearWorkspace()" class="btn-action" style="color:var(--mac-text-secondary)">เริ่มบิลใหม่</button>
+            <button onclick="window.print()" class="btn-action btn-primary" style="margin-left: auto;">พิมพ์เอกสารที่กำลังเปิด</button>
+            </div>
+
+          <div class="section-label">ประวัติย้อนหลัง</div>
+          <div class="panel">
+            <div id="historyList"></div>
+            <div class="empty-state" id="historyEmpty">ยังไม่มีประวัติการบันทึก</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- หน้าต่าง Pop-up สำหรับกราฟ -->
+  <div class="modal-overlay" id="chartModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeChartModal()">✕</button>
+      <h3 style="margin-top:0; color: var(--mac-text); font-weight: 600;">สรุปรายรับ-รายจ่าย (กราฟ)</h3>
+      <div class="chart-container">
+        <canvas id="yearlyChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>
