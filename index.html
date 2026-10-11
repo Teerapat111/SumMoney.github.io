@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Summoney</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summoney</title>
 
-<!-- เรียกใช้ Chart.js และ Plugin แสดงตัวเลขบนกราฟ -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <!-- ฟอนต์ Google Fonts (ไทย + ตัวเลข) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- ไฟล์สไตล์ของเว็บ -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Chart.js (ไลบรารีวาดกราฟ) + Plugin แสดงตัวเลข/% บนกราฟ
+       ล็อกเวอร์ชันไว้ เพื่อไม่ให้เว็บพังเมื่อไลบรารีอัปเดตเวอร์ชันใหม่ -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 </head>
+
 <body>
   <div class="mac-window">
+
+    <!-- แถบหัวเพจ (ตอนนี้ปล่อยว่างไว้ ไม่แสดงชื่อ) -->
     <div class="title-bar">
-      <div class="window-title"></div>   <!-- ชื่อหัวเพจ Summoney ออก -->
+      <div class="window-title"></div>
     </div>
 
     <div class="content">
       <div class="layout">
 
+        <!-- ===== การ์ดสรุปยอด: คงเหลือ / รับเข้า / จ่ายไปทั้งหมด ===== -->
         <div class="balance-card">
           <div class="balance-main">
             <div class="balance-label">คงเหลือหลังหักรายจ่าย</div>
@@ -40,6 +49,7 @@
           </div>
         </div>
 
+        <!-- ===== คอลัมน์ซ้าย: ช่องกรอกรายรับ + รายการที่ต้องจ่าย ===== -->
         <div>
           <div class="section-label">เงินที่ได้รับ</div>
           <div class="panel">
@@ -54,6 +64,7 @@
 
           <div class="section-label">รายการที่ต้องจ่าย</div>
           <div class="panel">
+            <!-- แถวรายการจะถูก script.js สร้างใส่ตรงนี้ -->
             <div class="items-list" id="itemsList"></div>
             <div class="empty-state" id="emptyState">ยังไม่มีรายการ กด "เพิ่มรายการ" เพื่อเริ่มบันทึก</div>
             <div class="list-footer">
@@ -65,53 +76,62 @@
           </div>
         </div>
 
+        <!-- ===== คอลัมน์ขวา: กราฟวงกลมสัดส่วนรายจ่าย ===== -->
         <div>
           <div class="section-label">&nbsp;</div>
-          
-          <!-- กราฟวงกลมฝั่งขวา -->
           <div class="pie-card">
             <h3 class="pie-title">📊 สัดส่วนรายจ่าย</h3>
             <div class="pie-chart-wrapper">
               <canvas id="expensePieChart"></canvas>
             </div>
           </div>
-
         </div>
 
+        <!-- ===== แถบปุ่มคำสั่ง + ประวัติย้อนหลัง (กว้างเต็มแถว) ===== -->
         <div style="grid-column: 1 / -1;">
 
-            <div class="action-bar">
+          <div class="action-bar">
+            <!-- เลือกวัน-เวลาที่จะบันทึก (ถ้าไม่เลือก ใช้เวลาปัจจุบัน) -->
             <input type="datetime-local" id="recordDateTime" lang="th-TH" class="btn-action" title="เลือกระบุวันเวลา">
 
             <button id="saveHistoryBtn" class="btn-action">💾 บันทึกข้อมูลเก็บไว้</button>
             <button onclick="openChartModal()" class="btn-action">📊 ดูกราฟรายปี</button>
-
             <button onclick="clearWorkspace()" class="btn-action" style="color:var(--mac-text-secondary)">เริ่มบิลใหม่</button>
             <button onclick="window.print()" class="btn-action btn-primary" style="margin-left: auto;">พิมพ์เอกสารที่กำลังเปิด</button>
-            </div>
-
-          <div class="section-label">ประวัติย้อนหลัง</div>
-          <div class="panel">
-            <div id="historyList"></div>
-            <div class="empty-state" id="historyEmpty">ยังไม่มีประวัติการบันทึก</div>
           </div>
-        </div>
 
+          <!-- ส่วนประวัติ (ซ่อนตอนสั่งพิมพ์ ผ่านคลาส history-section) -->
+          <div class="history-section">
+            <div class="section-label">ประวัติย้อนหลัง</div>
+            <div class="panel">
+              <!-- รายการประวัติถูก script.js สร้างใส่ตรงนี้ -->
+              <div id="historyList"></div>
+              <div class="empty-state" id="historyEmpty">ยังไม่มีประวัติการบันทึก</div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- หน้าต่าง Pop-up สำหรับกราฟ -->
+  <!-- ===== หน้าต่าง Pop-up กราฟรายปี ===== -->
   <div class="modal-overlay" id="chartModal">
     <div class="modal-content">
       <button class="close-modal" onclick="closeChartModal()">✕</button>
-      <h3 style="margin-top:0; color: var(--mac-text); font-weight: 600;">สรุปรายรับ-รายจ่าย (กราฟ)</h3>
+
+      <div class="modal-header">
+        <h3 class="modal-title">สรุปรายรับ-รายจ่าย (กราฟ)</h3>
+        <!-- เลือกปี (พ.ศ.) -->
+        <select id="chartYear" class="year-select" title="เลือกปี"></select>
+      </div>
+
       <div class="chart-container">
         <canvas id="yearlyChart"></canvas>
       </div>
     </div>
   </div>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
