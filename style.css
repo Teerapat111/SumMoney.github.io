@@ -354,6 +354,7 @@ input[type="datetime-local"].btn-action { /* ปรับสไตล์ขอ�
 #recordDateTime { /* ปรับสไตล์ของ input datetime-local */
   width: auto;
   max-width: 140px;
+
   padding: 4px 8px;
   font-size: 12px;
   border-radius: 6px;
@@ -365,7 +366,7 @@ input[type="datetime-local"].btn-action { /* ปรับสไตล์ขอ�
 }
 
 .pie-card {  /* กรอบของกราฟวงกลม */
-  background: rgba(255, 255, 255, 0.877);
+  background: rgba(255, 255, 255, 0.123);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(83, 83, 83, 0.4);
